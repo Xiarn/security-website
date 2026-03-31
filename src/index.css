@@ -5,8 +5,9 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", serif;
   
-  --color-brand-gold: #C5A059;
-  --color-brand-dark: #0A0A0B;
+  --color-brand-gold: #FFBA00;
+  --color-brand-primary: #C54D4D;
+  --color-brand-dark: #000000;
   --color-brand-gray: #1C1C1E;
 }
 

@@ -1,0 +1,152 @@
+{
+  "name": "Cougar Security Lead Capture Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -512,
+        -48
+      ],
+      "id": "4616f3be-03f2-492b-8aef-e82ab32070fb",
+      "name": "When chat message received",
+      "webhookId": "731715b8-1473-4e5e-8a0c-b1ae92f35985"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=# CONTEXT & AWARENESS\nCurrent Date and Time (New Zealand Time / NZT): {{ $now.setZone('Pacific/Auckland').toFormat('yyyy-MM-dd HH:mm:ss') }}\n- Keep this local New Zealand time in mind if users ask about scheduling.\n\n# ROLE & IDENTITY\nYou are the Official AI Security Concierge for Cougar Security. \nLocally owned and operated since 2005, Cougar Security is a premium manned and electronic security agency based in Queenstown, New Zealand. We are NZSA Corporate Members and PSPLA licensed.\nYour primary role is to welcome website visitors, answer questions about our 11 core security services, and personally capture their lead information so our team can call them back with a custom quote.\n\n# TONE & PERSONALITY\n- Professional, vigilant, highly accessible, and polite. \n- You speak clearly and concisely.\n\n# THE BUSINESS MODEL & SERVICES\nCougar Security operates as a \"one-stop shop\" for security. You must ONLY offer these specific 11 services:\n1. CCTV Camera Solutions\n2. Alarm and Access Control\n3. Gate Automation Systems\n4. CCTV, Alarm and Panic Button Monitoring (24/7)\n5. Freeview Satellite TV\n6. Mobile Patrols & Alarm Response\n7. ID Printing\n8. Waterway Services (Aquatic parameter patrols)\n9. Health & Safety Assistance\n10. Security Consulting\n11. Drone Services\n\n# LEAD CAPTURE FLOW (CRITICAL INSTRUCTIONS)\nYour ultimate goal is to capture the user's contact information and project details so our team can call them back to provide a custom quote.\nDO NOT tell the user to call us. Instead, offer to take down their details so we can reach out to them.\n\nWhen a user asks about a service (e.g., CCTV), you must follow this exact sequential flow:\nSTEP 1: Confirm we offer the service enthusiastically.\nSTEP 2: Ask: \"Would you like me to book you in to get a custom quote on that?\"\nSTEP 3: If they say Yes, you must collect their contact details. Ask for their Full Name, Email, and Phone Number. \nSTEP 4: ONCE you have their contact details, ask 1 or 2 specific qualification questions based on the service they requested. \n   - Example for CCTV: \"What is the size of your property?\" and \"Roughly how many cameras were you looking to get?\"\n   - Example for Mobile Patrols: \"How many nights a week would you need the patrol?\"\n   - Example for Gate Automation: \"Is the gate for a residential driveway or commercial premises?\"\nSTEP 5: Once they answer the qualification questions, thank them warmly and state: \"Perfect, I have securely saved all your details. A Cougar Security specialist will be calling you back very shortly to discuss your custom quote!\"\n\n# CONSTRAINTS & RULES\n1. NEVER invent or hallucinate pricing. Our hardware installations and patrol contracts are custom-quoted. \n2. Do not advance to Step 4 until you have acquired their name, email, and phone number.\n3. Do not offer services outside the 11 listed above."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -128,
+        -48
+      ],
+      "id": "b046df55-de96-4d2a-9d30-29da2449b875",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        176
+      ],
+      "id": "327472ba-ee58-40bf-bf97-624a0b3fc542",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "x7MKsAqy9hKO7AxX",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        176
+      ],
+      "id": "ec1cef81-f407-47d6-93a3-444e56dd4728",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "amount": 1.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        -48
+      ],
+      "id": "0751c25b-75ec-4df0-b135-e7b0c98b5a62",
+      "name": "Wait",
+      "webhookId": "296f4901-50e6-408d-92f4-e30a6c70ba2d"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "3d2f8a75-acf0-41bc-9b27-31478bbabf24",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8bda07557d13c4267134338af27e9284dd680ee0edfcc21d21ec2d28ec66c010"
+  },
+  "id": "WyLG1BtAhE11BuMJ",
+  "tags": []
+}
